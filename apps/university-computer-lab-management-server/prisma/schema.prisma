@@ -1,0 +1,68 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Student {
+  bookings  Booking[]
+  createdAt DateTime  @default(now())
+  email     String?
+  id        String    @id @default(cuid())
+  name      String?
+  studentId String?
+  updatedAt DateTime  @updatedAt
+}
+
+model Lab {
+  capacity  Int?
+  computers Computer[]
+  createdAt DateTime   @default(now())
+  id        String     @id @default(cuid())
+  location  String?
+  name      String?
+  updatedAt DateTime   @updatedAt
+}
+
+model Computer {
+  bookings  Booking[]
+  createdAt DateTime            @default(now())
+  id        String              @id @default(cuid())
+  lab       Lab?                @relation(fields: [labId], references: [id])
+  labId     String?
+  specs     Json?
+  status    EnumComputerStatus?
+  updatedAt DateTime            @updatedAt
+}
+
+model Administrator {
+  createdAt DateTime               @default(now())
+  id        String                 @id @default(cuid())
+  password  String?
+  role      EnumAdministratorRole?
+  updatedAt DateTime               @updatedAt
+  username  String?
+}
+
+model Booking {
+  bookingDate DateTime?
+  computer    Computer? @relation(fields: [computerId], references: [id])
+  computerId  String?
+  createdAt   DateTime  @default(now())
+  duration    Int?
+  id          String    @id @default(cuid())
+  student     Student?  @relation(fields: [studentId], references: [id])
+  studentId   String?
+  updatedAt   DateTime  @updatedAt
+}
+
+enum EnumComputerStatus {
+  Option1
+}
+
+enum EnumAdministratorRole {
+  Option1
+}
